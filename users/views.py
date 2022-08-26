@@ -108,13 +108,10 @@ def github_callback(request):
                     try:
                         user = models.User.objects.get(email=email)
                         if user.login_method != models.User.LOGIN_GITHUB:
-                            login(request, user)
-                            return redirect(reverse("core:home"))
-
+                            raise GithubException()
                     except models.User.DoesNotExist:
                         user = models.User.objects.create(
                             email=email,
-                            first_name=name,
                             username=email,
                             bio=bio,
                             login_method=models.User.LOGIN_GITHUB,
