@@ -1,6 +1,8 @@
 from distutils.log import error
 from email import header
+from http import client
 import os
+import profile
 from signal import raise_signal
 from tkinter import E
 import requests
@@ -8,6 +10,7 @@ from django.views.generic import FormView
 from django.urls import reverse_lazy
 from django.shortcuts import redirect, reverse
 from django.contrib.auth import authenticate, login, logout
+from django.core.files.base import ContentFile
 from . import forms, models
 
 
@@ -112,6 +115,7 @@ def github_callback(request):
                     except models.User.DoesNotExist:
                         user = models.User.objects.create(
                             email=email,
+                            first_name=name,
                             username=email,
                             bio=bio,
                             login_method=models.User.LOGIN_GITHUB,
@@ -153,19 +157,19 @@ def kakao_callback(request):
         token_json = token_request.json()
         error = token_json.get("error", None)
         if error is not None:
-            raise KakaoException()
+            raise (KakaoException())
         access_token = token_json.get("access_token")
         profile_request = requests.get(
             "https://kapi.kakao.com/v2/user/me",
             headers={"Authorization": f"Bearer {access_token}"},
         )
         profile_json = profile_request.json()
-        email = profile_json.get("kaccount_email", None)
+        properties = profile_json.get("kakao_account")
+        email = properties.get("email")
         if email is None:
             raise KakaoException()
-        properties = profile_json.get("properties")
-        nickname = properties.get("nickname")
-        profile_image = properties.get("profile_image")
+        nickname = properties.get("profile").get("nickname")
+        profile_image = properties.get("profile").get("profile_image_url")
         try:
             user = models.User.objects.get(email=email)
             if user.login_method != models.User.LOGIN_KAKAO:
@@ -178,8 +182,13 @@ def kakao_callback(request):
                 login_method=models.User.LOGIN_KAKAO,
                 email_verified=True,
             )
-            user.set_unsualble_password()
+            user.set_unusable_password()
             user.save()
+            if profile_image is not None:
+                photo_request = requests.get(profile_image)
+                user.avatar.save(
+                    f"{nickname}-avatar", ContentFile(photo_request.content)
+                )
         login(request, user)
         return redirect(reverse("core:home"))
     except KakaoException:
