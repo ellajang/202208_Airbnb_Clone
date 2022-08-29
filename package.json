@@ -11,15 +11,12 @@
   },
   "homepage": "https://github.com/ellajang/202208_Airbnb_Clone#readme",
   "devDependencies": {
-    "autoprefixer": "^9.8.8",
+    "autoprefixer": "^9.7.0",
     "gulp": "^4.0.2",
-    "gulp-csso": "^4.0.1",
-    "gulp-postcss": "^9.0.1",
-    "gulp-sass": "^5.1.0",
-    "node-sass": "^7.0.1",
-    "postcss": "^8.4.16",
-    "postcss-cli": "^10.0.0",
-    "sass": "^1.54.5",
-    "tailwindcss": "^2.2.19"
+    "gulp-csso": "^3.0.1",
+    "gulp-postcss": "^8.0.0",
+    "gulp-sass": "^4.0.2",
+    "node-sass": "^4.13.0",
+    "tailwindcss": "^1.1.3"
   }
 }
