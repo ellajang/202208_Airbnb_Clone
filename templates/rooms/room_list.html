@@ -13,7 +13,7 @@
                  {% include 'mixins/room_card.html' with room=room %}
             {% endfor %}
             </div>    
-            <div class="flex justify-center mx-auto container">
+            <div class="flex items-center justify-center mx-auto container">
                 {%if page_obj.has_previous%}
 
                 <a href="?page={{page_obj.previous_page_number}}"class="text-teal-500">
