@@ -17,7 +17,7 @@
                     {% endif %}           
                 </div>
 
-                <span class="text-lg mb-5">{{user_obj.bio}}</span>
+                <span class="text-sm mb-5">{{user_obj.bio}}</span>
 
                 
                 {% if user == user_obj %}
@@ -31,7 +31,7 @@
                 <h3 class="mb-12 text-2xl">
                     {{user_obj.first_name}}'s Rooms
                 </h3>
-                <div class="flex flex-wrap -mx-40 mg-10 ">
+                <div class="flex flex-wrap -mx-40 mg-20 ">
                     {%for room in user_obj.rooms.all %}
                         {% include 'mixins/room_card.html' with room=room %}
                     {% endfor %}
