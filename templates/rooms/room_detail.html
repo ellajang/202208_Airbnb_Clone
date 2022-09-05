@@ -1,5 +1,5 @@
 {% extends "base.html" %} 
-{% load is_booked %}
+{% load is_booked on_favs i18n %}
 
 {% block page_title %} 
      {{room.name}}
@@ -29,6 +29,12 @@
                          <span class="mt-2 text-gray-500">{{room.host.first_name}}</span>
                     </a>
                </div>
+               {% on_favs room as on_favs_boolean %}
+               {% if on_favs_boolean %}
+                    <a class="block mb-10 w-1/3 text-teal-500 font-bold" href="{% url 'lists:toggle-room' room.pk %}?action=remove">{% trans "Remove to Favorites" %}</a>
+               {% else %}
+                    <a class="block mb-10 w-1/3 text-teal-500 font-bold" href="{% url 'lists:toggle-room' room.pk %}?action=add">{% trans "Save to Favorites" %}</a>
+               {% endif %}     
                <div class="flex border-section">
                     <span class="mr-5 font-light">{{room.room_type}}</span>
                     <span class="mr-5 font-light">{{room.beds}} bed{{room.beds|pluralize}}</span>
@@ -99,29 +105,29 @@
                     {% if not request.session.is_hosting %}
                          {% for calendar in room.get_calendars  %}
                          <div class="mb-30">
-                         <span class="text-center font-medium text-lg block mb-8">{{calendar.get_month}} / {{calendar.year}}</span>
-                              <div class="grid grid-cols-7 font-bold gap-2 justify-items-center mb-4 text-sm text-gray-800">
-                                   {% for day in calendar.day_names  %}
-                                   <span>{{day}}</span>
-                                   {% endfor %}
+                              <span class="text-center font-medium text-lg block mb-8">{{calendar.get_month}} / {{calendar.year}}</span>
+                                   <div class="grid grid-cols-7 font-bold gap-2 justify-items-center mb-4 text-sm text-gray-800">
+                                        {% for day in calendar.day_names  %}
+                                        <span>{{day}}</span>
+                                        {% endfor %}
+                                   </div>
                               </div>
-                         </div>
-                         <div class="grid grid-cols-7 gap-2 justify-items-center mb-4 text-sm">
-                              {% for day in calendar.get_days  %}
-                                   {% is_booked room day as is_booked_bool %}
-                                   {% if day.number != 0 %}
-                                        {% if day.past %}
-                                             <span class="rounded bg-gray-200 w-full text-center p-1 text-gray-300">{{day}}</span>
-                                        {% elif is_booked_bool %}
-                                             <span class="rounded bg-gray-200 w-full text-center p-1 text-gray-300 line-through">{{day}}</span>
+                              <div class="grid grid-cols-7 gap-2 justify-items-center mb-4 text-sm">
+                                   {% for day in calendar.get_days  %}
+                                        {% is_booked room day as is_booked_bool %}
+                                        {% if day.number != 0 %}
+                                             {% if day.past %}
+                                                  <span class="rounded bg-gray-200 w-full text-center p-1 text-gray-300">{{day}}</span>
+                                             {% elif is_booked_bool %}
+                                                  <span class="rounded bg-gray-200 w-full text-center p-1 text-gray-300 line-through">{{day}}</span>
+                                             {% else %}
+                                                  <a href="{% url 'reservations:create' room.pk day.year day.month day.number %}" class="bg-gray-200 w-full text-center rounded text-gray-700 p-1 hover:bg-teal-400 hover:text-white cursor-pointer hover:font-medium">{{day}}</a>
+                                             {% endif %}    
                                         {% else %}
-                                             <a href="{% url 'reservations:create' room.pk day.year day.month day.number %}" class="bg-gray-200 w-full text-center rounded text-gray-700 p-1 hover:bg-teal-400 hover:text-white cursor-pointer hover:font-medium">{{day}}</a>
-                                        {% endif %}    
-                                   {% else %}
-                                        <span></span>
-                                   {% endif %}
-                              {% endfor %}
-                                   
+                                             <span></span>
+                                        {% endif %}
+                                   {% endfor %}
+                                        
                          </div>
                          {% endfor %}
                     {% endif %}

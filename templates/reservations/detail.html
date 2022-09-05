@@ -29,14 +29,14 @@
                 </div>
                 <div class="ml-5 flex flex-col">
                     <span class="font-medium mb-px">Contact your Airbnb Host</span>
-                    <a href="#" class="font-medium text-teal-500">Send a Messsage</a>
+                    <a href="{% url 'conversations:go' reservation.room.host.pk reservation.guest.pk %}" class="font-medium text-teal-500">Send a Messsage</a>
                 </div>
             </div>
             
             <div class="py-10 px-5">
             {% if reservation.status != 'canceled' %}
                 {% if reservation.status == 'confirmed' and reservation.is_finished %}
-                    <span class="font-medium text-2lg text-center w-full block mb-5">Write your review</span>
+                    <span class="font-medium text-2xl text-center w-full block mb-5">Write your review</span>
                     <form action="{% url 'reviews:create' reservation.room.pk %}" method="POST" class="w-1/2 mx-auto">
                         {% csrf_token %}
                         {{form}}
@@ -45,8 +45,8 @@
                 {% else %}
                         {% if reservation.status == 'pending' %}
                             <a href="{% url 'reservations:edit' reservation.pk 'cancel' %}" class="btn-link block px-5">Cancel Reservation</a>
-                            {% if reservation.room.host != 'user' %}
-                                <a href="{% url 'reservations:edit' reservation.pk 'confirm' %}" class="btn-link block px-3 mb-5">Confirm Reservation</a>   
+                            {% if reservation.room.host == user %}
+                                <a href="{% url 'reservations:edit' reservation.pk 'confirm' %}" class="btn-link block px-3 mb-5">Confirm Reservation</a> 
                             {% endif %}
                         {% endif %} 
                     {% endif %}   

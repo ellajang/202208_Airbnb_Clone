@@ -54,7 +54,7 @@ def edit_reservation(request, pk, verb):
         reservation.guest != request.user and reservation.room.host != request.user
     ):
         raise Http404()
-    if verb == "comfirm":
+    if verb == "confirm":
         reservation.status = models.Reservation.STATUS_CONFIRMED
     elif verb == "cancel":
         reservation.status = models.Reservation.STATUS_CANCELED

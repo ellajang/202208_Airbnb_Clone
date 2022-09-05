@@ -1,7 +1,11 @@
 from distutils.log import error
 from email import header
+from gettext import translation
+from config import settings
 from http import client
 import os
+from urllib import response
+from django.http import HttpResponse
 import profile
 from signal import raise_signal
 from tkinter import E
@@ -270,3 +274,11 @@ def switch_hosting(request):
     except KeyError:
         request.session["is_hosting"] = True
     return redirect(reverse("core:home"))
+
+
+def switch_language(request):
+    lang = request.GET.get("lang", None)
+    if lang is not None:
+        response = HttpResponse(200)
+        response.set_cookie(settings.LANGUAGE_COOKIE_NAME, lang)
+    return response
